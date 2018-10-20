@@ -4,7 +4,32 @@ var state = {
     tag: null
 };
 
-var ws = null;
+var socket = {
+    server: "ws://127.0.0.1:3050/",
+    client: null,
+    connect: function()
+    {
+        socket.client = new WebSocket(socket.server);
+        socket.client.onopen = socket.updateServerDetails;
+        socket.client.onclose = socket.reconnect;
+    },
+    reconnect: function()
+    {
+        setTimeout(function(){
+            socket.connect();
+        }, 5000);
+    },
+    updateServerDetails: function()
+    {
+        console.log("Details have changed");
+        console.log(state);
+
+        socket.client.send(JSON.stringify({
+            type: "update_details",
+            data: state
+        }));
+    }
+};
 
 function getState()
 {
@@ -14,16 +39,7 @@ function getState()
     return state;
 }
 
-var updateServerDetails = function()
-{
-    console.log("Details have changed");
-    console.log(state);
-
-    ws.send(JSON.stringify({
-        type: "update_details",
-        data: state
-    }));
-}
+var reconnectTimer = null;
 
 var initLc = function()
 {
@@ -44,29 +60,30 @@ var initLc = function()
 
     nick.addEventListener("change", function(e){
         state.nickname = nick.value;
-        updateServerDetails();
+        socket.updateServerDetails();
     });
 
     server.addEventListener("change", function(e){
         state.nickname = server.value;
-        updateServerDetails();
+        socket.updateServerDetails();
     });
 
     tag.addEventListener("change", function(e){
         state.nickname = tag.value;
-        updateServerDetails();
+        socket.updateServerDetails();
     });
 
-    reconnectButton.addEventListener("click", function(e){
-        setTimeout(function()
+    reconnectButton.addEventListener("click", function(e)
+    {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = setTimeout(function()
         {
             state.nickname = server.value;
-            updateServerDetails();
+            socket.updateServerDetails();
         }, 5000);
     });
 
-    ws = new WebSocket("ws://127.0.0.1:3050/");
-    ws.onopen = updateServerDetails;
+    socket.connect();
 };
 
 window.addEventListener("load", initLc);

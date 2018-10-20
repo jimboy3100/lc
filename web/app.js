@@ -1,7 +1,8 @@
 var app = new Vue({
     el: '#app',
     data: {
-        state: "Connecting..."
+        state: "Connecting...",
+        players: null
     },
     methods: {
         onOpen: function()

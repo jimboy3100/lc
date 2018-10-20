@@ -15,6 +15,8 @@ var socket = {
     },
     reconnect: function()
     {
+        console.log("Reconnecting in 5 seconds...");
+
         setTimeout(function(){
             socket.connect();
         }, 5000);
@@ -24,10 +26,18 @@ var socket = {
         console.log("Details have changed");
         console.log(state);
 
-        socket.client.send(JSON.stringify({
+        socket.send({
+            id: getSessionID(),
             type: "update_details",
             data: state
-        }));
+        });
+    },
+    send: function(msg)
+    {
+        if (socket.client.readyState !== socket.client.OPEN)
+            return;
+
+        socket.client.send(JSON.stringify(msg));
     }
 };
 
@@ -87,4 +97,26 @@ var initLc = function()
 };
 
 window.addEventListener("load", initLc);
+
+function getSessionID()
+{
+    return getCookie("__cfduid");
+}
+
+function getCookie(cname)
+{
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 

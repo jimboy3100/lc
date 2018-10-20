@@ -2,7 +2,12 @@
     "name": "℄ Player Servers",
     "version": "1.0",
     "description": "Tracks your connected Agar.io server and updates the ℄ clan so other players can find and join your server.",
-    "permissions": ["declarativeContent", "storage"],
+    "permissions": [
+      "declarativeContent",
+      "storage",
+      "activeTab",
+      "tabs"
+    ],
     "background": {
       "scripts": ["background.js"],
       "persistent": false
@@ -22,5 +27,12 @@
       "64": "images/lc64.png",
       "128": "images/lc128.png"
     },
+    "content_scripts": [
+      {
+        "matches": ["http://agar.io/*"],
+        // "css": ["styles.css"],
+        "js": ["contentScript.js"]
+      }
+    ],
     "manifest_version": 2
   }

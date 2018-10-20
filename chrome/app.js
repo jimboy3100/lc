@@ -4,10 +4,8 @@ chrome.tabs.executeScript({
 },
 (results) => {
     var state = results[0];
-    console.log(state);
 
     document.getElementById("nickname").innerHTML = state.nickname;
     document.getElementById("server").innerHTML = state.server;
     document.getElementById("tag").innerHTML = state.tag;
 });
-

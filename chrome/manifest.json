@@ -29,6 +29,7 @@
     },
     "content_scripts": [
       {
+        "run_at": "document_end",
         "matches": ["http://agar.io/*"],
         // "css": ["styles.css"],
         "js": ["contentScript.js"]
